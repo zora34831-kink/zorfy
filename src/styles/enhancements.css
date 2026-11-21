@@ -1,0 +1,65 @@
+
+.topbar {
+  height: 62px;
+}
+
+.brand {
+  font-size: 22px;
+  letter-spacing: -1.4px;
+}
+
+.hero {
+  padding: 30px 0 24px;
+}
+
+.hero h1 {
+  font-size: clamp(32px, 8vw, 46px);
+  letter-spacing: -2.2px;
+}
+
+.feature-panel {
+  min-height: 205px;
+  padding: 22px;
+}
+
+.mini-player:not(.has-track) {
+  display: none;
+}
+
+.category-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.category-switch button {
+  min-height: 48px;
+  border: 1px solid #ffffff1c;
+  border-radius: 14px;
+  background: #ffffff09;
+  color: #eee;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.category-switch button.active {
+  background: #e9ebee;
+  color: #11151a;
+}
+
+.player-content {
+  padding-top: max(18px, env(safe-area-inset-top));
+}
+
+.album-frame {
+  width: min(70vw, 300px);
+  margin: 24px auto 22px;
+}
+
+@media (max-height: 720px) {
+  .album-frame {
+    width: min(58vw, 245px);
+    margin: 16px auto;
+  }
+}
