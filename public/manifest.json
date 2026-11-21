@@ -1,0 +1,10 @@
+
+{
+  "name": "ZORFY",
+  "short_name": "ZORFY",
+  "description": "Your Music, Your Moment",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#090909",
+  "theme_color": "#090909"
+}
