@@ -2,119 +2,43 @@
 import './styles/main.css';
 
 const API = 'https://api.audius.co/v1';
+const LYRICS_API = 'https://lrclib.net/api';
 const APP_NAME = 'ZORFY';
+
 const FAVORITES_KEY = 'zorfy_favorites';
 const LYRICS_KEY = 'zorfy_lyrics';
 
 const indonesiaQueries = [
-  'pop indonesia',
-  'lagu indonesia populer',
-  'lagu indonesia terbaru',
-  'lagu galau indonesia',
-  'lagu romantis indonesia',
-  'indonesian indie',
-  'indonesian rock',
-  'lagu nostalgia indonesia',
-  'lagu band indonesia',
-  'lagu akustik indonesia',
-  'lagu viral indonesia',
-  'lagu jawa populer',
-  'dangdut koplo indonesia',
-  'lagu religi indonesia',
-  'Wali',
-  'Nenekku Pahlawanku Wali',
+  'pop indonesia', 'lagu indonesia populer', 'lagu indonesia terbaru',
+  'lagu galau indonesia', 'lagu romantis indonesia', 'indonesian indie',
+  'indonesian rock', 'lagu nostalgia indonesia', 'lagu band indonesia',
+  'lagu akustik indonesia', 'lagu viral indonesia', 'lagu jawa populer',
+  'dangdut koplo indonesia', 'lagu religi indonesia',
+  'Wali', 'Nenekku Pahlawanku Wali',
   'Hingga Tua Bersama Rizky Febian',
-  'Sempurna Andra and The Backbone',
-  'Komang Raim Laode',
-  'Tulus',
-  'Afgan',
-  'Raisa',
-  'Isyana Sarasvati',
-  'Rossa',
-  'Yura Yunita',
-  'Mahalini',
-  'Tiara Andini',
-  'Lyodra',
-  'Ziva Magnolya',
-  'Judika',
-  'Virgoun',
-  'Last Child',
-  'Armada',
-  'Repvblik',
-  'D Masiv',
-  'ST12',
-  'Kangen Band',
-  'Hindia',
-  'Feast',
-  'Nadin Amizah',
-  'Sal Priadi',
-  'Fiersa Besari',
-  'Feby Putri',
-  'Fourtwnty',
-  'Dewa 19',
-  'NOAH',
-  'Peterpan',
-  'Sheila On 7',
-  'Ungu',
-  'Padi',
-  'Nidji',
-  'Kotak',
-  'J Rocks',
-  'Drive',
-  'Geisha',
-  'Denny Caknan',
-  'NDX AKA',
-  'Guyon Waton',
-  'Happy Asmara',
-  'Nella Kharisma',
-  'Via Vallen',
-  'Gilga Sahid',
-  'Opick',
-  'Sabyan',
-  'RAN',
-  'Maliq D Essentials',
-  'Kunto Aji',
-  'Pamungkas',
-  'Danilla',
-  'The Overtunes',
-  'GAC',
-  'Juicy Luicy',
-  'Bernadya',
-  'Budi Doremi',
-  'Anji',
-  'Ari Lasso',
-  'Glenn Fredly',
-  'Chrisye',
-  'Iwan Fals',
-  'Ebiet G Ade',
-  'Kerispatih',
-  'Samsons'
+  'Sempurna Andra and The Backbone', 'Komang Raim Laode',
+  'Tulus', 'Afgan', 'Raisa', 'Isyana Sarasvati', 'Rossa',
+  'Yura Yunita', 'Mahalini', 'Tiara Andini', 'Lyodra',
+  'Ziva Magnolya', 'Judika', 'Virgoun', 'Last Child', 'Armada',
+  'Repvblik', 'D Masiv', 'ST12', 'Kangen Band', 'Hindia', 'Feast',
+  'Nadin Amizah', 'Sal Priadi', 'Fiersa Besari', 'Feby Putri',
+  'Fourtwnty', 'Dewa 19', 'NOAH', 'Peterpan', 'Sheila On 7',
+  'Ungu', 'Padi', 'Nidji', 'Kotak', 'J Rocks', 'Drive', 'Geisha',
+  'Denny Caknan', 'NDX AKA', 'Guyon Waton', 'Happy Asmara',
+  'Nella Kharisma', 'Via Vallen', 'Gilga Sahid', 'Opick', 'Sabyan',
+  'RAN', 'Maliq D Essentials', 'Kunto Aji', 'Pamungkas', 'Danilla',
+  'The Overtunes', 'GAC', 'Juicy Luicy', 'Bernadya', 'Budi Doremi',
+  'Anji', 'Ari Lasso', 'Glenn Fredly', 'Chrisye', 'Iwan Fals',
+  'Ebiet G Ade', 'Kerispatih', 'Samsons'
 ];
 
 const globalQueries = [
-  'global pop',
-  'pop hits',
-  'indie pop',
-  'alternative rock',
-  'acoustic songs',
-  'rnb',
-  'hip hop',
-  'electronic music',
-  'jazz',
-  'lofi',
-  'rock classics',
-  'folk pop',
-  'Taylor Swift',
-  'The Weeknd',
-  'Ed Sheeran',
-  'Bruno Mars',
-  'Adele',
-  'Coldplay',
-  'Imagine Dragons',
-  'One Direction',
-  'Justin Bieber',
-  'Billie Eilish',
-  'Lana Del Rey'
+  'global pop', 'pop hits', 'indie pop', 'alternative rock',
+  'acoustic songs', 'rnb', 'hip hop', 'electronic music',
+  'jazz', 'lofi', 'rock classics', 'folk pop',
+  'Taylor Swift', 'The Weeknd', 'Ed Sheeran', 'Bruno Mars',
+  'Adele', 'Coldplay', 'Imagine Dragons', 'One Direction',
+  'Justin Bieber', 'Billie Eilish', 'Lana Del Rey'
 ];
 
 const audio = new Audio();
@@ -129,8 +53,11 @@ let shuffle = false;
 let repeat = false;
 let searchTimer = null;
 let toastTimer = null;
+
 let currentLyrics = [];
+let currentLyricsMode = 'none';
 let activeLyricIndex = -1;
+let lyricsRequestToken = 0;
 let requestToken = 0;
 
 const $ = selector => document.querySelector(selector);
@@ -205,9 +132,7 @@ function normalizeTrack(track) {
 async function api(path) {
   const response = await fetch(`${API}${path}`, {
     method: 'GET',
-    headers: {
-      Accept: 'application/json'
-    }
+    headers: { Accept: 'application/json' }
   });
 
   if (!response.ok) {
@@ -233,9 +158,7 @@ async function searchTracks(query, limit = 20) {
 }
 
 function formatTime(seconds) {
-  if (!Number.isFinite(seconds) || seconds < 0) {
-    return '0:00';
-  }
+  if (!Number.isFinite(seconds) || seconds < 0) return '0:00';
 
   const min = Math.floor(seconds / 60);
   const sec = Math.floor(seconds % 60);
@@ -252,17 +175,13 @@ function toggleFavorite(song) {
   if (!song) return false;
 
   const favorites = getFavorites();
-
-  const exists = favorites.some(
-    item => item.id === song.id
-  );
+  const exists = favorites.some(item => item.id === song.id);
 
   const updated = exists
     ? favorites.filter(item => item.id !== song.id)
     : [...favorites, song];
 
   safeStorageSet(FAVORITES_KEY, updated);
-
   return !exists;
 }
 
@@ -297,6 +216,199 @@ function parseLRC(text) {
   return lines.sort((a, b) => a.time - b.time);
 }
 
+/* =========================
+   AUTOMATIC LYRICS - LRCLIB
+========================= */
+
+function normalizeText(value = '') {
+  return String(value)
+    .toLowerCase()
+    .replace(/\(.*?\)|\[.*?\]/g, '')
+    .replace(/[^a-z0-9]/g, '');
+}
+
+function plainLyricsToLines(text) {
+  return String(text || '')
+    .split(/\r?\n/)
+    .map(line => line.trim())
+    .filter(Boolean)
+    .map(text => ({
+      time: -1,
+      text
+    }));
+}
+
+async function lyricsRequest(url) {
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+      'X-User-Agent': 'ZORFY/2.2 (https://github.com/zora34831-kink/zorfy)'
+    }
+  });
+
+  if (response.status === 404) return null;
+
+  if (response.status === 429) {
+    throw new Error('LRCLIB rate limit');
+  }
+
+  if (!response.ok) {
+    throw new Error(`LRCLIB ${response.status}`);
+  }
+
+  return response.json();
+}
+
+async function fetchLyricsRecord(song) {
+  const params = new URLSearchParams({
+    track_name: song.title,
+    artist_name: song.artist
+  });
+
+  if (song.duration > 0 && song.duration <= 3600) {
+    params.set('duration', String(Math.round(song.duration)));
+  }
+
+  // 1. Exact match dengan durasi.
+  let record = await lyricsRequest(
+    `${LYRICS_API}/get?${params}`
+  );
+
+  if (record) return record;
+
+  // 2. Coba lagi tanpa durasi.
+  if (params.has('duration')) {
+    params.delete('duration');
+
+    record = await lyricsRequest(
+      `${LYRICS_API}/get?${params}`
+    );
+
+    if (record) return record;
+  }
+
+  // 3. Cari berdasarkan judul dan artis.
+  const searchParams = new URLSearchParams({
+    track_name: song.title,
+    artist_name: song.artist
+  });
+
+  const results = await lyricsRequest(
+    `${LYRICS_API}/search?${searchParams}`
+  );
+
+  if (!Array.isArray(results)) return null;
+
+  const title = normalizeText(song.title);
+  const artist = normalizeText(song.artist);
+
+  // Utamakan hasil yang judul dan artisnya cocok.
+  const exact = results.find(item =>
+    normalizeText(item.trackName) === title &&
+    normalizeText(item.artistName) === artist
+  );
+
+  return exact || null;
+}
+
+function applyLyricsRecord(record) {
+  if (!record || record.instrumental) {
+    currentLyrics = [];
+    currentLyricsMode = 'none';
+    activeLyricIndex = -1;
+    renderLyrics();
+    return;
+  }
+
+  if (record.syncedLyrics) {
+    const parsed = parseLRC(record.syncedLyrics);
+
+    if (parsed.length) {
+      currentLyrics = parsed;
+      currentLyricsMode = 'synced';
+    } else {
+      currentLyrics = [];
+      currentLyricsMode = 'none';
+    }
+  } else if (record.plainLyrics) {
+    currentLyrics = plainLyricsToLines(record.plainLyrics);
+    currentLyricsMode = 'plain';
+  } else {
+    currentLyrics = [];
+    currentLyricsMode = 'none';
+  }
+
+  activeLyricIndex = -1;
+  renderLyrics();
+}
+
+async function loadAutomaticLyrics(song) {
+  if (!song) return;
+
+  const token = ++lyricsRequestToken;
+  const cached = getLyricsMap()[song.id];
+
+  // Gunakan lirik yang sudah tersimpan.
+  if (Array.isArray(cached) && cached.length) {
+    currentLyrics = cached;
+
+    currentLyricsMode = cached.some(
+      line => Number(line.time) >= 0
+    ) ? 'synced' : 'plain';
+
+    activeLyricIndex = -1;
+    renderLyrics();
+    updateLyricsStatus();
+    return;
+  }
+
+  currentLyrics = [];
+  currentLyricsMode = 'loading';
+  activeLyricIndex = -1;
+
+  renderLyrics();
+  updateLyricsStatus();
+
+  try {
+    const record = await fetchLyricsRecord(song);
+
+    // Abaikan respons jika pengguna sudah mengganti lagu.
+    if (
+      token !== lyricsRequestToken ||
+      currentTrack?.id !== song.id
+    ) return;
+
+    applyLyricsRecord(record);
+
+    if (currentLyrics.length) {
+      const map = getLyricsMap();
+      map[song.id] = currentLyrics;
+      safeStorageSet(LYRICS_KEY, map);
+    }
+
+    updateLyricsStatus();
+
+  } catch (error) {
+    console.warn('Automatic lyrics:', error);
+
+    if (
+      token !== lyricsRequestToken ||
+      currentTrack?.id !== song.id
+    ) return;
+
+    currentLyrics = [];
+    currentLyricsMode = 'none';
+
+    renderLyrics();
+    updateLyricsStatus();
+  }
+}
+
+/* =========================
+   UI
+========================= */
+
 function songRow(song) {
   return `<button class="song-item" data-song="${escapeHTML(song.id)}">
     <img src="${escapeHTML(song.cover)}" alt=""
@@ -311,7 +423,6 @@ function songRow(song) {
 
 function shell(content) {
   return `<div class="app-shell">
-
     <header class="topbar">
       <a class="brand" href="#" id="brandHome">
         ZORFY<span>.</span>
@@ -323,18 +434,13 @@ function shell(content) {
 
     <button class="dynamic-island" id="dynamicIsland"
       aria-label="Buka pemutar">
-
       <span class="island-art">
         <img id="islandCover" alt="">
       </span>
-
       <span class="island-info">
         <strong id="islandTitle">ZORFY</strong>
-        <small id="islandArtist">
-          Pilih musik untuk mulai
-        </small>
+        <small id="islandArtist">Pilih musik untuk mulai</small>
       </span>
-
       <span class="island-action" id="islandPlay">
         ${icon('play')}
       </span>
@@ -342,29 +448,21 @@ function shell(content) {
 
     <nav class="bottom-nav" aria-label="Navigasi utama">
       <button data-page="home" class="active">
-        ${icon('home')}
-        <span>Beranda</span>
+        ${icon('home')}<span>Beranda</span>
       </button>
-
       <button data-page="search">
-        ${icon('search')}
-        <span>Cari</span>
+        ${icon('search')}<span>Cari</span>
       </button>
-
       <button data-page="library">
-        ${icon('library')}
-        <span>Pustaka</span>
+        ${icon('library')}<span>Pustaka</span>
       </button>
-
       <button data-page="settings">
-        ${icon('settings')}
-        <span>Settings</span>
+        ${icon('settings')}<span>Settings</span>
       </button>
     </nav>
 
     <div id="playerModal" class="player-modal"></div>
     <div id="toast" class="toast"></div>
-
   </div>`;
 }
 
@@ -372,36 +470,20 @@ function homePage() {
   return `
     <section class="hero">
       <span class="overline">YOUR SOUND. YOUR SPACE.</span>
-
-      <h1>
-        Every moment<br>
-        <span>has a soundtrack.</span>
-      </h1>
-
-      <p>
-        Temukan musik yang cocok dengan suasana lu.
-      </p>
+      <h1>Every moment<br><span>has a soundtrack.</span></h1>
+      <p>Temukan musik yang cocok dengan suasana lu.</p>
     </section>
 
     <section class="feature-panel">
       <div class="feature-copy">
         <span class="overline">ZORFY DISCOVERY</span>
-
-        <h2>
-          Find your<br>
-          next favorite.
-        </h2>
-
+        <h2>Find your<br>next favorite.</h2>
         <button class="light-button" id="discoverButton">
           Jelajahi musik <span>↗</span>
         </button>
       </div>
-
       <div class="feature-orb"></div>
-
-      <span class="feature-index">
-        01 / DISCOVER
-      </span>
+      <span class="feature-index">01 / DISCOVER</span>
     </section>
 
     <section class="section">
@@ -410,14 +492,10 @@ function homePage() {
           <span class="overline">PILIHAN AWAL</span>
           <h2>Rekomendasi lagu</h2>
         </div>
-
         <span class="section-count">AUDIUS</span>
       </div>
-
       <div class="song-list" id="featuredSongs">
-        <div class="loading-line">
-          Memuat katalog musik...
-        </div>
+        <div class="loading-line">Memuat katalog musik...</div>
       </div>
     </section>
 
@@ -428,24 +506,17 @@ function homePage() {
           <h2>Playlist pribadi</h2>
         </div>
       </div>
-
       <button class="collection-card" id="openLibrary">
         <span class="collection-art">Z.</span>
-
         <span class="collection-copy">
           <strong>My Favorite Songs</strong>
-          <small id="favoriteCount">
-            Memuat koleksi...
-          </small>
+          <small id="favoriteCount">Memuat koleksi...</small>
         </span>
-
         <span class="collection-arrow">↗</span>
       </button>
     </section>
 
-    <p class="source-note">
-      MUSIC CATALOG POWERED BY AUDIUS
-    </p>
+    <p class="source-note">MUSIC CATALOG POWERED BY AUDIUS</p>
   `;
 }
 
@@ -453,32 +524,20 @@ function searchPage() {
   return `
     <section class="page-heading">
       <span class="overline">DISCOVER SOMETHING NEW</span>
-
       <h1>Search<span>.</span></h1>
-
-      <p>
-        Cari musik dari katalog yang tersedia.
-      </p>
+      <p>Cari musik dari katalog yang tersedia.</p>
     </section>
 
     <div class="search-wrap">
       ${icon('search')}
-
-      <input
-        id="searchInput"
+      <input id="searchInput"
         placeholder="Judul lagu atau nama artis..."
-        autocomplete="off"
-      >
+        autocomplete="off">
     </div>
 
     <div class="category-switch">
-      <button class="selected" data-category="indonesia">
-        Indonesia
-      </button>
-
-      <button data-category="global">
-        Global
-      </button>
+      <button class="selected" data-category="indonesia">Indonesia</button>
+      <button data-category="global">Global</button>
     </div>
 
     <div class="search-meta" id="searchMeta">
@@ -500,17 +559,12 @@ function libraryPage() {
   return `
     <section class="page-heading">
       <span class="overline">YOUR COLLECTION</span>
-
       <h1>Library<span>.</span></h1>
-
-      <p>
-        Musik pilihan yang lu simpan.
-      </p>
+      <p>Musik pilihan yang lu simpan.</p>
     </section>
 
     <div class="collection-card">
       <span class="collection-art">Z.</span>
-
       <span class="collection-copy">
         <strong>My Favorite Songs</strong>
         <small>${favorites.length} lagu tersimpan</small>
@@ -518,10 +572,7 @@ function libraryPage() {
     </div>
 
     <section class="section">
-      <div class="section-heading">
-        <h2>Lagu favorit</h2>
-      </div>
-
+      <div class="section-heading"><h2>Lagu favorit</h2></div>
       <div class="song-list">
         ${
           favorites.length
@@ -537,140 +588,96 @@ function settingsPage() {
   return `
     <section class="page-heading">
       <span class="overline">PERSONAL PREFERENCES</span>
-
       <h1>Settings<span>.</span></h1>
-
-      <p>
-        Atur pengalaman mendengarkan musik.
-      </p>
+      <p>Atur pengalaman mendengarkan musik.</p>
     </section>
 
     <section class="settings-group">
       <div class="settings-heading">LYRICS</div>
-
       <div class="settings-card">
         <div>
-          <strong>Impor lirik tersinkron</strong>
+          <strong>Lirik otomatis</strong>
           <p>
-            Pilih file .LRC untuk lagu yang sedang diputar.
+            ZORFY mencari lirik berdasarkan judul dan artis lagu.
           </p>
         </div>
-
+        <small id="lyricsStatus">
+          Putar lagu untuk mencari lirik.
+        </small>
+        <div>
+          <strong>Impor lirik tersinkron</strong>
+          <p>Pilih file .LRC sebagai cadangan.</p>
+        </div>
         <label class="settings-upload">
           Pilih file LRC
-          <input
-            type="file"
-            id="lyricsUpload"
-            accept=".lrc,text/plain"
-          >
+          <input type="file" id="lyricsUpload" accept=".lrc,text/plain">
         </label>
-
-        <small id="lyricsStatus">
-          Belum ada lirik untuk lagu aktif.
-        </small>
       </div>
     </section>
 
     <section class="settings-group">
       <div class="settings-heading">PLAYBACK</div>
-
       <div class="settings-card settings-row">
         <div>
           <strong>Kontrol layar kunci</strong>
-          <p>
-            Metadata dan kontrol media yang didukung Android.
-          </p>
+          <p>Metadata dan kontrol media yang didukung Android.</p>
         </div>
-
         <span class="settings-state">MEDIA SESSION</span>
       </div>
-
       <div class="settings-card settings-row">
         <div>
           <strong>Pemutaran latar</strong>
-          <p>
-            Dapat bergantung pada dukungan Android
-            dan pengelolaan baterai.
-          </p>
+          <p>Dapat bergantung pada dukungan Android dan pengelolaan baterai.</p>
         </div>
-
         <span class="settings-state">ANDROID</span>
       </div>
     </section>
 
     <section class="settings-group">
       <div class="settings-heading">ABOUT</div>
-
       <div class="settings-card settings-row">
         <div>
           <strong>ZORFY Music</strong>
-          <p>
-            Version 2.1 · Your Music, Your Moment
-          </p>
+          <p>Version 2.2 · Your Music, Your Moment</p>
         </div>
-
         <span class="settings-state">ZORFY</span>
       </div>
     </section>
   `;
 }
 
+/* =========================
+   NAVIGATION & CATALOG
+========================= */
+
 function navigate(page) {
   currentPage = page;
 
-  document.querySelectorAll(
-    '.bottom-nav [data-page]'
-  ).forEach(button => {
+  document.querySelectorAll('.bottom-nav [data-page]').forEach(button => {
     const active = button.dataset.page === page;
-
     button.classList.toggle('active', active);
-
-    button.setAttribute(
-      'aria-current',
-      active ? 'page' : 'false'
-    );
+    button.setAttribute('aria-current', active ? 'page' : 'false');
   });
 
   const content = $('#pageContent');
-
   if (!content) return;
 
-  if (page === 'home') {
-    content.innerHTML = homePage();
-  }
-
-  if (page === 'search') {
-    content.innerHTML = searchPage();
-  }
-
-  if (page === 'library') {
-    content.innerHTML = libraryPage();
-  }
-
-  if (page === 'settings') {
-    content.innerHTML = settingsPage();
-  }
+  if (page === 'home') content.innerHTML = homePage();
+  if (page === 'search') content.innerHTML = searchPage();
+  if (page === 'library') content.innerHTML = libraryPage();
+  if (page === 'settings') content.innerHTML = settingsPage();
 
   bindPageEvents();
 
-  if (page === 'home') {
-    loadFeatured();
-  }
-
-  if (page === 'settings') {
-    updateLyricsStatus();
-  }
+  if (page === 'home') loadFeatured();
+  if (page === 'settings') updateLyricsStatus();
 }
 
 async function discoverCatalog(queries, maxResults = 80) {
   const unique = new Map();
   const batchSize = 4;
 
-  for (
-    let i = 0;
-    i < queries.length;
-    i += batchSize
-  ) {
+  for (let i = 0; i < queries.length; i += batchSize) {
     const batch = queries.slice(i, i + batchSize);
 
     const results = await Promise.allSettled(
@@ -697,7 +704,6 @@ async function discoverCatalog(queries, maxResults = 80) {
 
 async function loadFeatured() {
   const container = $('#featuredSongs');
-
   if (!container) return;
 
   const token = ++requestToken;
@@ -714,10 +720,7 @@ async function loadFeatured() {
       36
     );
 
-    if (
-      token !== requestToken ||
-      !container.isConnected
-    ) return;
+    if (token !== requestToken || !container.isConnected) return;
 
     songs = found;
     queue = found;
@@ -729,8 +732,7 @@ async function loadFeatured() {
     const count = $('#favoriteCount');
 
     if (count) {
-      count.textContent =
-        `${getFavorites().length} lagu tersimpan`;
+      count.textContent = `${getFavorites().length} lagu tersimpan`;
     }
 
     bindSongButtons();
@@ -757,28 +759,22 @@ async function loadCategory(category) {
   const token = ++requestToken;
 
   results.innerHTML = `
-    <div class="loading-line">
-      Memuat katalog musik. Tunggu sebentar...
-    </div>
+    <div class="loading-line">Memuat katalog musik. Tunggu sebentar...</div>
   `;
 
   meta.textContent = 'MENGUMPULKAN LAGU';
 
   try {
-    const queries =
-      category === 'indonesia'
-        ? indonesiaQueries
-        : globalQueries;
+    const queries = category === 'indonesia'
+      ? indonesiaQueries
+      : globalQueries;
 
     const tracks = await discoverCatalog(
       queries,
       category === 'indonesia' ? 100 : 80
     );
 
-    if (
-      token !== requestToken ||
-      !results.isConnected
-    ) return;
+    if (token !== requestToken || !results.isConnected) return;
 
     songs = tracks;
     queue = tracks;
@@ -787,8 +783,7 @@ async function loadCategory(category) {
       ? tracks.map(songRow).join('')
       : '<div class="empty-state">Belum ada lagu dari kategori ini.</div>';
 
-    meta.textContent =
-      `${tracks.length} LAGU DITEMUKAN · AUDIUS`;
+    meta.textContent = `${tracks.length} LAGU DITEMUKAN · AUDIUS`;
 
     bindSongButtons();
 
@@ -822,27 +817,17 @@ async function runSearch(query) {
       </div>
     `;
 
-    meta.textContent =
-      'PILIH KATEGORI ATAU CARI LAGU';
-
+    meta.textContent = 'PILIH KATEGORI ATAU CARI LAGU';
     return;
   }
 
-  results.innerHTML = `
-    <div class="loading-line">
-      Mencari musik...
-    </div>
-  `;
-
+  results.innerHTML = `<div class="loading-line">Mencari musik...</div>`;
   meta.textContent = 'SEARCHING';
 
   try {
     const tracks = await searchTracks(query, 30);
 
-    if (
-      token !== requestToken ||
-      !results.isConnected
-    ) return;
+    if (token !== requestToken || !results.isConnected) return;
 
     songs = tracks;
     queue = tracks;
@@ -851,8 +836,7 @@ async function runSearch(query) {
       ? tracks.map(songRow).join('')
       : '<div class="empty-state">Tidak ada hasil yang cocok.</div>';
 
-    meta.textContent =
-      `${tracks.length} HASIL DITEMUKAN`;
+    meta.textContent = `${tracks.length} HASIL DITEMUKAN`;
 
     bindSongButtons();
 
@@ -882,16 +866,17 @@ function bindSongButtons() {
         ...getFavorites()
       ].find(item => String(item.id) === String(id));
 
-      if (song) {
-        playSong(song);
-      }
+      if (song) playSong(song);
     };
   });
 }
 
+/* =========================
+   PLAYER
+========================= */
+
 function showToast(message) {
   const toast = $('#toast');
-
   if (!toast) return;
 
   toast.textContent = message;
@@ -913,61 +898,37 @@ function updateIsland() {
   const play = $('#islandPlay');
   const island = $('#dynamicIsland');
 
-  if (cover) {
-    cover.src = currentTrack.cover || '';
-  }
-
-  if (title) {
-    title.textContent = currentTrack.title;
-  }
-
-  if (artist) {
-    artist.textContent = currentTrack.artist;
-  }
+  if (cover) cover.src = currentTrack.cover || '';
+  if (title) title.textContent = currentTrack.title;
+  if (artist) artist.textContent = currentTrack.artist;
 
   if (play) {
-    play.innerHTML = audio.paused
-      ? icon('play')
-      : icon('pause');
+    play.innerHTML = audio.paused ? icon('play') : icon('pause');
   }
 
   if (island) {
     island.classList.add('has-track');
-
-    island.classList.toggle(
-      'is-playing',
-      !audio.paused
-    );
+    island.classList.toggle('is-playing', !audio.paused);
   }
 }
 
-/*
- * Menggunakan Web Media Session API.
- * Plugin native Capgo tidak dipanggil di versi ini.
- */
-
 function syncMediaSession() {
   try {
-    if (
-      !currentTrack ||
-      !('mediaSession' in navigator)
-    ) return;
+    if (!currentTrack || !('mediaSession' in navigator)) return;
 
     if (typeof MediaMetadata !== 'undefined') {
-      navigator.mediaSession.metadata =
-        new MediaMetadata({
-          title: currentTrack.title,
-          artist: currentTrack.artist,
-          album: 'ZORFY',
-
-          artwork: currentTrack.cover
-            ? [{
-                src: currentTrack.cover,
-                sizes: '512x512',
-                type: 'image/jpeg'
-              }]
-            : []
-        });
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: currentTrack.title,
+        artist: currentTrack.artist,
+        album: 'ZORFY',
+        artwork: currentTrack.cover
+          ? [{
+              src: currentTrack.cover,
+              sizes: '512x512',
+              type: 'image/jpeg'
+            }]
+          : []
+      });
     }
 
     navigator.mediaSession.playbackState =
@@ -981,13 +942,9 @@ function syncMediaSession() {
       navigator.mediaSession.setPositionState({
         duration: audio.duration,
         playbackRate: 1,
-        position: Math.min(
-          audio.currentTime,
-          audio.duration
-        )
+        position: Math.min(audio.currentTime, audio.duration)
       });
     }
-
   } catch (error) {
     console.warn('Media Session:', error);
   }
@@ -1002,7 +959,6 @@ function setupMediaSession() {
       pause: () => audio.pause(),
       nexttrack: () => nextSong(),
       previoustrack: () => previousSong(),
-
       seekto: details => {
         if (
           Number.isFinite(details?.seekTime) &&
@@ -1018,18 +974,11 @@ function setupMediaSession() {
 
     for (const [action, handler] of Object.entries(actions)) {
       try {
-        navigator.mediaSession.setActionHandler(
-          action,
-          handler
-        );
+        navigator.mediaSession.setActionHandler(action, handler);
       } catch (error) {
-        console.warn(
-          `Media action ${action} unsupported`,
-          error
-        );
+        console.warn(`Media action ${action} unsupported`, error);
       }
     }
-
   } catch (error) {
     console.warn('Media Session unavailable:', error);
   }
@@ -1047,19 +996,33 @@ async function playSong(song) {
     queue = [song, ...queue];
   }
 
+  // Batalkan pencarian lirik dari lagu sebelumnya.
+  lyricsRequestToken++;
+
+  currentLyrics = [];
+  currentLyricsMode = 'loading';
+  activeLyricIndex = -1;
+
   try {
     audio.pause();
-
     audio.src = song.stream;
     audio.load();
 
-    currentLyrics =
-      getLyricsMap()[song.id] || [];
+    const savedLyrics = getLyricsMap()[song.id];
 
-    activeLyricIndex = -1;
+    if (Array.isArray(savedLyrics) && savedLyrics.length) {
+      currentLyrics = savedLyrics;
+
+      currentLyricsMode = savedLyrics.some(
+        line => Number(line.time) >= 0
+      ) ? 'synced' : 'plain';
+    }
 
     openPlayer();
     updateIsland();
+
+    // Pencarian lirik berjalan tanpa menunggu audio.
+    loadAutomaticLyrics(song);
 
     await audio.play();
 
@@ -1084,24 +1047,14 @@ function openPlayer() {
 
   modal.innerHTML = `
     <div class="player-content">
-
       <div class="player-topline">
-        <button class="close-player" id="closePlayer"
-          aria-label="Tutup">↓</button>
-
+        <button class="close-player" id="closePlayer" aria-label="Tutup">↓</button>
         <span>NOW PLAYING</span>
-
-        <button class="favorite-button"
-          id="favoriteButton"
-          aria-label="Favorit">♡</button>
+        <button class="favorite-button" id="favoriteButton" aria-label="Favorit">♡</button>
       </div>
 
       <div class="album-frame">
-        <img
-          class="large-cover"
-          src="${escapeHTML(song.cover)}"
-          alt=""
-        >
+        <img class="large-cover" src="${escapeHTML(song.cover)}" alt="">
       </div>
 
       <div class="player-track-info">
@@ -1112,21 +1065,12 @@ function openPlayer() {
 
       <div class="lyrics-panel" id="lyricsPanel">
         <span class="lyrics-label">LYRICS</span>
-
         <div id="lyricsLines" class="lyrics-lines">
-          <p class="lyrics-empty">
-            Impor file .LRC di Settings untuk melihat lirik sinkron.
-          </p>
+          <p class="lyrics-empty">Mencari lirik lagu...</p>
         </div>
       </div>
 
-      <input
-        type="range"
-        id="seekBar"
-        min="0"
-        max="100"
-        value="0"
-      >
+      <input type="range" id="seekBar" min="0" max="100" value="0">
 
       <div class="player-times">
         <span id="currentTime">0:00</span>
@@ -1136,22 +1080,17 @@ function openPlayer() {
       <div class="player-controls">
         <button id="shuffleButton" aria-label="Acak">⇄</button>
         <button id="previousButton" aria-label="Sebelumnya">|◀</button>
-        <button id="mainPlay" aria-label="Putar">
-          ${icon('play')}
-        </button>
+        <button id="mainPlay" aria-label="Putar">${icon('play')}</button>
         <button id="nextButton" aria-label="Berikutnya">▶|</button>
         <button id="repeatButton" aria-label="Ulang">↻</button>
       </div>
 
-      <a
-        class="audius-link"
+      <a class="audius-link"
         href="${escapeHTML(song.permalink)}"
         target="_blank"
-        rel="noopener"
-      >
+        rel="noopener">
         BUKA TRACK DI AUDIUS ↗
       </a>
-
     </div>
   `;
 
@@ -1166,9 +1105,7 @@ function updatePlayerUI() {
   const main = $('#mainPlay');
 
   if (main) {
-    main.innerHTML = audio.paused
-      ? icon('play')
-      : icon('pause');
+    main.innerHTML = audio.paused ? icon('play') : icon('pause');
   }
 
   updateIsland();
@@ -1185,33 +1122,20 @@ function bindPlayerEvents() {
   }
 
   const main = $('#mainPlay');
-
-  if (main) {
-    main.onclick = togglePlay;
-  }
+  if (main) main.onclick = togglePlay;
 
   const previous = $('#previousButton');
-
-  if (previous) {
-    previous.onclick = previousSong;
-  }
+  if (previous) previous.onclick = previousSong;
 
   const next = $('#nextButton');
-
-  if (next) {
-    next.onclick = nextSong;
-  }
+  if (next) next.onclick = nextSong;
 
   const shuffleButton = $('#shuffleButton');
 
   if (shuffleButton) {
     shuffleButton.onclick = event => {
       shuffle = !shuffle;
-
-      event.currentTarget.classList.toggle(
-        'selected',
-        shuffle
-      );
+      event.currentTarget.classList.toggle('selected', shuffle);
     };
   }
 
@@ -1220,32 +1144,28 @@ function bindPlayerEvents() {
   if (repeatButton) {
     repeatButton.onclick = event => {
       repeat = !repeat;
-
-      event.currentTarget.classList.toggle(
-        'selected',
-        repeat
-      );
+      event.currentTarget.classList.toggle('selected', repeat);
     };
   }
 
   const favoriteButton = $('#favoriteButton');
 
   if (favoriteButton) {
+    const isFavorite = getFavorites().some(
+      item => item.id === currentTrack?.id
+    );
+
+    favoriteButton.textContent = isFavorite ? '♥' : '♡';
+    favoriteButton.classList.toggle('selected', isFavorite);
+
     favoriteButton.onclick = event => {
       const added = toggleFavorite(currentTrack);
 
-      event.currentTarget.textContent =
-        added ? '♥' : '♡';
-
-      event.currentTarget.classList.toggle(
-        'selected',
-        added
-      );
+      event.currentTarget.textContent = added ? '♥' : '♡';
+      event.currentTarget.classList.toggle('selected', added);
 
       showToast(
-        added
-          ? 'Ditambahkan ke favorit'
-          : 'Dihapus dari favorit'
+        added ? 'Ditambahkan ke favorit' : 'Dihapus dari favorit'
       );
     };
   }
@@ -1259,8 +1179,7 @@ function bindPlayerEvents() {
         audio.duration > 0
       ) {
         audio.currentTime =
-          audio.duration *
-          Number(event.target.value) / 100;
+          audio.duration * Number(event.target.value) / 100;
       }
     };
   }
@@ -1308,38 +1227,56 @@ function previousSong() {
     song => song.id === currentTrack?.id
   );
 
-  const index =
-    (currentIndex - 1 + queue.length) % queue.length;
+  const index = (currentIndex - 1 + queue.length) % queue.length;
 
   playSong(queue[index]);
 }
 
+/* =========================
+   LYRICS DISPLAY & IMPORT
+========================= */
+
 function renderLyrics() {
   const container = $('#lyricsLines');
-
   if (!container) return;
+
+  if (currentLyricsMode === 'loading') {
+    container.innerHTML = `
+      <p class="lyrics-empty">Mencari lirik lagu...</p>
+    `;
+    return;
+  }
 
   if (!currentLyrics.length) {
     container.innerHTML = `
       <p class="lyrics-empty">
-        Belum ada lirik. Impor file .LRC melalui Settings.
+        Lirik belum tersedia. Lu masih bisa impor file LRC.
       </p>
     `;
-
     return;
   }
 
-  container.innerHTML = currentLyrics.map(
-    (line, index) => `
-      <p class="lyric-line" data-lyric="${index}">
-        ${escapeHTML(line.text || '♪')}
-      </p>
-    `
-  ).join('');
+  container.innerHTML = currentLyrics.map((line, index) => `
+    <p class="lyric-line" data-lyric="${index}">
+      ${escapeHTML(line.text || '♪')}
+    </p>
+  `).join('');
+
+  if (currentLyricsMode === 'plain') {
+    container.insertAdjacentHTML(
+      'afterbegin',
+      `<p class="lyrics-empty">
+        Lirik tersedia, tetapi belum tersinkron.
+      </p>`
+    );
+  }
 }
 
 function updateLyrics() {
-  if (!currentLyrics.length) return;
+  if (
+    currentLyricsMode !== 'synced' ||
+    !currentLyrics.length
+  ) return;
 
   let index = -1;
 
@@ -1355,19 +1292,12 @@ function updateLyrics() {
 
   activeLyricIndex = index;
 
-  document.querySelectorAll('.lyric-line').forEach(
-    (line, i) => {
-      line.classList.toggle(
-        'active',
-        i === index
-      );
-    }
-  );
+  document.querySelectorAll('.lyric-line').forEach((line, i) => {
+    line.classList.toggle('active', i === index);
+  });
 
   if (index >= 0) {
-    document.querySelector(
-      `[data-lyric="${index}"]`
-    )?.scrollIntoView({
+    document.querySelector(`[data-lyric="${index}"]`)?.scrollIntoView({
       behavior: 'smooth',
       block: 'center'
     });
@@ -1376,56 +1306,56 @@ function updateLyrics() {
 
 function updateLyricsStatus() {
   const status = $('#lyricsStatus');
-
   if (!status) return;
 
   if (!currentTrack) {
-    status.textContent =
-      'Putar lagu terlebih dahulu.';
+    status.textContent = 'Putar lagu terlebih dahulu.';
     return;
   }
 
-  const hasLyrics =
-    (getLyricsMap()[currentTrack.id] || []).length > 0;
-
-  status.textContent = hasLyrics
-    ? `Lirik tersedia untuk: ${currentTrack.title}`
-    : `Belum ada lirik untuk: ${currentTrack.title}`;
+  if (currentLyricsMode === 'loading') {
+    status.textContent = 'Sedang mencari lirik otomatis...';
+  } else if (currentLyricsMode === 'synced') {
+    status.textContent = 'Lirik tersinkron tersedia.';
+  } else if (currentLyricsMode === 'plain') {
+    status.textContent = 'Lirik tersedia, tetapi tidak tersinkron.';
+  } else {
+    status.textContent = `Lirik belum ditemukan untuk: ${currentTrack.title}`;
+  }
 }
 
 function importLyrics(file) {
   if (!file || !currentTrack) {
-    showToast(
-      'Putar lagu sebelum mengimpor lirik.'
-    );
+    showToast('Putar lagu sebelum mengimpor lirik.');
     return;
   }
 
   const reader = new FileReader();
 
   reader.onload = () => {
-    const parsed = parseLRC(
-      String(reader.result || '')
-    );
+    const parsed = parseLRC(String(reader.result || ''));
 
     if (!parsed.length) {
       showToast('Format LRC tidak valid.');
       return;
     }
 
-    const map = getLyricsMap();
+    // Batalkan pencarian otomatis yang masih berjalan.
+    lyricsRequestToken++;
 
+    const map = getLyricsMap();
     map[currentTrack.id] = parsed;
 
     safeStorageSet(LYRICS_KEY, map);
 
     currentLyrics = parsed;
+    currentLyricsMode = 'synced';
     activeLyricIndex = -1;
 
     renderLyrics();
     updateLyricsStatus();
 
-    showToast('Lirik berhasil dimuat.');
+    showToast('Lirik LRC berhasil dimuat.');
   };
 
   reader.onerror = () => {
@@ -1434,6 +1364,10 @@ function importLyrics(file) {
 
   reader.readAsText(file);
 }
+
+/* =========================
+   PAGE EVENTS
+========================= */
 
 function bindPageEvents() {
   bindSongButtons();
@@ -1453,17 +1387,10 @@ function bindPageEvents() {
     });
   }
 
-  document.querySelectorAll(
-    '[data-category]'
-  ).forEach(button => {
+  document.querySelectorAll('[data-category]').forEach(button => {
     button.onclick = () => {
-      document.querySelectorAll(
-        '[data-category]'
-      ).forEach(item => {
-        item.classList.toggle(
-          'selected',
-          item === button
-        );
+      document.querySelectorAll('[data-category]').forEach(item => {
+        item.classList.toggle('selected', item === button);
       });
 
       loadCategory(button.dataset.category);
@@ -1471,16 +1398,10 @@ function bindPageEvents() {
   });
 
   const discover = $('#discoverButton');
-
-  if (discover) {
-    discover.onclick = () => navigate('search');
-  }
+  if (discover) discover.onclick = () => navigate('search');
 
   const openLibrary = $('#openLibrary');
-
-  if (openLibrary) {
-    openLibrary.onclick = () => navigate('library');
-  }
+  if (openLibrary) openLibrary.onclick = () => navigate('library');
 
   const upload = $('#lyricsUpload');
 
@@ -1492,44 +1413,35 @@ function bindPageEvents() {
   }
 }
 
+/* =========================
+   APP INITIALIZATION
+========================= */
+
 if (!app) {
-  throw new Error(
-    'Elemen #app tidak ditemukan di index.html'
-  );
+  throw new Error('Elemen #app tidak ditemukan di index.html');
 }
 
 app.innerHTML = shell(homePage());
 
-document.querySelectorAll(
-  '.bottom-nav [data-page]'
-).forEach(button => {
+document.querySelectorAll('.bottom-nav [data-page]').forEach(button => {
   button.addEventListener('click', () => {
     navigate(button.dataset.page);
   });
 });
 
-$('#brandHome')?.addEventListener(
-  'click',
-  event => {
-    event.preventDefault();
-    navigate('home');
-  }
-);
+$('#brandHome')?.addEventListener('click', event => {
+  event.preventDefault();
+  navigate('home');
+});
 
-$('#dynamicIsland')?.addEventListener(
-  'click',
-  () => {
-    if (currentTrack) openPlayer();
-  }
-);
+$('#dynamicIsland')?.addEventListener('click', () => {
+  if (currentTrack) openPlayer();
+});
 
-$('#islandPlay')?.addEventListener(
-  'click',
-  event => {
-    event.stopPropagation();
-    togglePlay();
-  }
-);
+$('#islandPlay')?.addEventListener('click', event => {
+  event.stopPropagation();
+  togglePlay();
+});
 
 audio.addEventListener('timeupdate', () => {
   const seek = $('#seekBar');
@@ -1546,8 +1458,7 @@ audio.addEventListener('timeupdate', () => {
     const current = $('#currentTime');
 
     if (current) {
-      current.textContent =
-        formatTime(audio.currentTime);
+      current.textContent = formatTime(audio.currentTime);
     }
   }
 
@@ -1568,10 +1479,7 @@ audio.addEventListener('play', updatePlayerUI);
 audio.addEventListener('pause', updatePlayerUI);
 
 audio.addEventListener('error', () => {
-  showToast(
-    'Sumber audio gagal dimuat. Pilih lagu lain.'
-  );
-
+  showToast('Sumber audio gagal dimuat. Pilih lagu lain.');
   updatePlayerUI();
 });
 
