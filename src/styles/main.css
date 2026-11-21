@@ -918,3 +918,60 @@ a {
     width: calc(100% - 24px);
   }
 }
+
+
+/* =================================
+   ZORFY — ANDROID SAFE SPACING FIX
+================================= */
+
+/* Ruang aman atas untuk status bar */
+.app-shell {
+  padding-top: max(32px, calc(env(safe-area-inset-top) + 12px));
+  padding-bottom: calc(210px + env(safe-area-inset-bottom));
+  min-height: 100dvh;
+}
+
+/* Header tidak bertabrakan dengan jam dan ikon HP */
+.topbar {
+  min-height: 78px;
+  height: 78px;
+}
+
+/* Beri jarak lebih lega dari header ke konten */
+.hero {
+  padding-top: 48px;
+  padding-bottom: 38px;
+}
+
+/* Jarak antarkonten */
+.section {
+  margin-top: 46px;
+}
+
+/* Navigasi tetap berada di bawah */
+.bottom-nav {
+  bottom: 0;
+  padding-bottom: calc(9px + env(safe-area-inset-bottom));
+}
+
+/* Mini-player berada di atas navigasi */
+.mini-player {
+  bottom: calc(76px + env(safe-area-inset-bottom) + 12px);
+}
+
+/* Ruang ekstra agar konten terakhir tidak tertutup */
+#pageContent {
+  padding-bottom: 35px;
+}
+
+/* Tampilan HP kecil */
+@media (max-width: 380px) {
+  .app-shell {
+    padding-top: max(28px, calc(env(safe-area-inset-top) + 10px));
+    padding-bottom: calc(205px + env(safe-area-inset-bottom));
+  }
+
+  .hero {
+    padding-top: 42px;
+  }
+}
