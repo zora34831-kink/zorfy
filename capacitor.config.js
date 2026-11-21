@@ -1,8 +1,8 @@
 
-import { defineConfig } from '@capacitor/cli';
-
-export default defineConfig({
+const config = {
   appId: 'com.zora.zorfy',
   appName: 'ZORFY',
   webDir: 'dist'
-});
+};
+
+export default config;
