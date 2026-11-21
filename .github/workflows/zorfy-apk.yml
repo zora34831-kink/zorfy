@@ -51,6 +51,12 @@ jobs:
       - name: Sync Capacitor
         run: npx cap sync android
 
+      - name: Generate ZORFY Icon
+        run: |
+          npx --yes @capacitor/assets generate --android \
+            --iconBackgroundColor "#111419" \
+            --iconBackgroundColorDark "#111419"
+
       - name: Build APK
         working-directory: android
         run: |
