@@ -1,26 +1,25 @@
 
-const STORAGE_KEY = 'zorfy_saved_posters';
+const KEY = 'zorfy_posters';
 
 export function renderPoster() {
   return `
     <section class="poster-studio">
-      <div class="poster-header">
-        <span>CREATIVE STUDIO / ZORFY</span>
-        <h1>Poster Studio</h1>
+      <div class="page-heading">
+        <span>CREATIVE STUDIO</span>
+        <h1>Poster Studio.</h1>
         <p>Buat artwork playlist milikmu.</p>
       </div>
 
       <div class="poster-preview">
         <div class="poster-art" id="posterArt">
           <div class="poster-top">
-            <span>ZORFY.</span>
+            <strong>ZORFY.</strong>
             <span>PLAYLIST COLLECTION</span>
           </div>
 
           <div class="poster-cover">
             <img id="posterCover"
-              src="https://placehold.co/600x600/292929/ffffff?text=ZORFY"
-              alt="Cover playlist">
+              src="https://placehold.co/600x600/292929/ffffff?text=ZORFY">
           </div>
 
           <div class="poster-bottom">
@@ -41,13 +40,12 @@ export function renderPoster() {
         <input id="editTitle" value="My Favorite Songs">
 
         <label>Nama artis</label>
-        <input id="editArtist"
-          value="Wali · Rizky Febian · Raim Laode">
+        <input id="editArtist" value="Wali · Rizky Febian · Raim Laode">
 
-        <label>Foto cover</label>
+        <label>Cover playlist</label>
         <input id="editCover" type="file" accept="image/*">
 
-        <label>Tema poster</label>
+        <label>Tema</label>
         <div class="theme-options">
           <button data-theme="dark">Dark</button>
           <button data-theme="silver">Silver</button>
@@ -55,18 +53,18 @@ export function renderPoster() {
         </div>
 
         <button class="export-button" id="exportPoster">
-          EKSPOR POSTER PNG
+          EKSPOR PNG
         </button>
 
         <button class="save-button" id="savePoster">
-          SIMPAN KE PUSTAKA
+          SIMPAN POSTER
         </button>
       </div>
 
-      <div class="saved-section">
+      <section class="saved-section">
         <h2>Poster tersimpan</h2>
         <div id="savedPosters"></div>
-      </div>
+      </section>
     </section>
   `;
 }
@@ -76,102 +74,108 @@ export function initPoster() {
   const artist = document.querySelector('#editArtist');
   const cover = document.querySelector('#editCover');
 
-  if (!title) return;
-
-  title.addEventListener('input', () => {
+  title.oninput = () => {
     document.querySelector('#posterTitle').textContent =
-      title.value || 'Untitled Playlist';
-  });
+      title.value || 'Untitled';
+  };
 
-  artist.addEventListener('input', () => {
+  artist.oninput = () => {
     document.querySelector('#posterArtist').textContent =
       artist.value || 'Unknown Artist';
-  });
+  };
 
-  cover.addEventListener('change', () => {
-    const file = cover.files?.[0];
+  cover.onchange = () => {
+    const file = cover.files[0];
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) return;
+    if (!file.type.startsWith('image/')) {
+      alert('File harus berupa gambar.');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Ukuran gambar maksimal 5 MB.');
+      return;
+    }
 
     const reader = new FileReader();
     reader.onload = () => {
       document.querySelector('#posterCover').src = reader.result;
     };
     reader.readAsDataURL(file);
-  });
+  };
 
   document.querySelectorAll('[data-theme]').forEach(button => {
-    button.addEventListener('click', () => {
-      const poster = document.querySelector('#posterArt');
-      poster.dataset.theme = button.dataset.theme;
-    });
+    button.onclick = () => {
+      document.querySelector('#posterArt').dataset.theme =
+        button.dataset.theme;
+    };
   });
 
-  document.querySelector('#exportPoster')
-    .addEventListener('click', exportPoster);
-
-  document.querySelector('#savePoster')
-    .addEventListener('click', savePoster);
+  document.querySelector('#exportPoster').onclick = exportPoster;
+  document.querySelector('#savePoster').onclick = savePoster;
 
   showSavedPosters();
 }
 
-async function createPosterBlob() {
-  const poster = document.querySelector('#posterArt');
+async function makeBlob() {
+  if (!window.html2canvas) {
+    throw new Error('Library ekspor poster belum tersedia.');
+  }
 
-  const canvas = await html2canvas(poster, {
-    scale: 2,
-    useCORS: true,
-    backgroundColor: null
-  });
+  const canvas = await html2canvas(
+    document.querySelector('#posterArt'),
+    { scale: 2, useCORS: true, backgroundColor: null }
+  );
 
-  return new Promise(resolve => {
-    canvas.toBlob(resolve, 'image/png');
-  });
+  return new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
 }
 
 async function exportPoster() {
-  const blob = await createPosterBlob();
-  if (!blob) return;
+  try {
+    const blob = await makeBlob();
+    if (!blob) throw new Error('Gagal membuat PNG.');
 
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
 
-  link.href = url;
-  link.download = 'ZORFY-POSTER.png';
-  link.click();
+    link.href = url;
+    link.download = 'ZORFY-POSTER.png';
+    link.click();
 
-  URL.revokeObjectURL(url);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  } catch (error) {
+    alert(error.message);
+  }
 }
 
 async function savePoster() {
   try {
-    const blob = await createPosterBlob();
-    if (!blob) throw new Error('Gagal membuat poster');
+    const blob = await makeBlob();
+    if (!blob) throw new Error('Poster gagal dibuat.');
 
-    const data = await blobToDataURL(blob);
-
-    const posters = JSON.parse(
-      localStorage.getItem(STORAGE_KEY) || '[]'
-    );
+    const image = await blobToDataURL(blob);
+    const posters = JSON.parse(localStorage.getItem(KEY) || '[]');
 
     posters.unshift({
       id: crypto.randomUUID(),
       title: document.querySelector('#editTitle').value,
-      image: data,
-      createdAt: new Date().toISOString()
+      image,
+      date: new Date().toISOString()
     });
 
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(posters.slice(0, 10))
-    );
+    const updated = posters.slice(0, 5);
+
+    try {
+      localStorage.setItem(KEY, JSON.stringify(updated));
+    } catch {
+      throw new Error('Penyimpanan penuh. Hapus poster lama.');
+    }
 
     showSavedPosters();
-    alert('Poster berhasil disimpan!');
+    alert('Poster berhasil disimpan.');
   } catch (error) {
-    alert('Penyimpanan gagal: ' + error.message);
+    alert(error.message);
   }
 }
 
@@ -184,36 +188,6 @@ function blobToDataURL(blob) {
   });
 }
 
-function showSavedPosters() {
-  const container = document.querySelector('#savedPosters');
-  if (!container) return;
-
-  const posters = JSON.parse(
-    localStorage.getItem(STORAGE_KEY) || '[]'
-  );
-
-  container.innerHTML = posters.map(poster => `
-    <div class="saved-poster">
-      <img src="${poster.image}" alt="Poster tersimpan">
-      <div>
-        <strong>${escapeHTML(poster.title)}</strong>
-        <button data-delete="${poster.id}">Hapus</button>
-      </div>
-    </div>
-  `).join('') || '<p>Belum ada poster tersimpan.</p>';
-
-  container.querySelectorAll('[data-delete]').forEach(button => {
-    button.addEventListener('click', () => {
-      const updated = posters.filter(
-        p => p.id !== button.dataset.delete
-      );
-
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-      showSavedPosters();
-    });
-  });
-}
-
 function escapeHTML(value) {
   return String(value).replace(/[&<>"']/g, char => ({
     '&': '&amp;',
@@ -222,4 +196,32 @@ function escapeHTML(value) {
     '"': '&quot;',
     "'": '&#39;'
   })[char]);
+}
+
+function showSavedPosters() {
+  const container = document.querySelector('#savedPosters');
+  if (!container) return;
+
+  const posters = JSON.parse(localStorage.getItem(KEY) || '[]');
+
+  container.innerHTML = posters.map(poster => `
+    <div class="saved-poster">
+      <img src="${poster.image}" alt="">
+      <div>
+        <strong>${escapeHTML(poster.title)}</strong>
+        <button data-delete="${poster.id}">Hapus poster</button>
+      </div>
+    </div>
+  `).join('') || '<p>Belum ada poster tersimpan.</p>';
+
+  container.querySelectorAll('[data-delete]').forEach(button => {
+    button.onclick = () => {
+      const updated = posters.filter(
+        poster => poster.id !== button.dataset.delete
+      );
+
+      localStorage.setItem(KEY, JSON.stringify(updated));
+      showSavedPosters();
+    };
+  });
 }
