@@ -42,15 +42,39 @@ function escapeHTML(value = '') {
 
 function icon(name) {
   const paths = {
-    home: '<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
-    search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',
-    library: '<path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/>',
-    settings: '<circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.6a8 8 0 0 1-1.5.9l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.5-.9l-1.7.6-1.4-2.4 1.4-1.1a7 7 0 0 1 0-1.8l-1.4-1.1 1.4-2.4 1.7.6a8 8 0 0 1 1.5-.9l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.5.9l1.7-.6 1.4 2.4-1.4 1.1a7 7 0 0 1 0 1.8Z"/>',
+    home: `
+      <path d="m3 10 9-7 9 7"/>
+      <path d="M5 9v11h14V9"/>
+      <path d="M9 20v-6h6v6"/>
+    `,
+    search: `
+      <circle cx="10.8" cy="10.8" r="7"/>
+      <path d="m16 16 5 5"/>
+    `,
+    library: `
+      <rect x="3" y="4" width="18" height="16" rx="2"/>
+      <path d="M8 4v16"/>
+      <path d="M12 9h5M12 13h5M12 17h3"/>
+    `,
+    settings: `
+      <path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"/>
+      <path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.6a8 8 0 0 1-1.5.9l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.5-.9l-1.7.6-1.4-2.4 1.4-1.1a7 7 0 0 1 0-1.8l-1.4-1.1 1.4-2.4 1.7.6a8 8 0 0 1 1.5-.9l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.5.9l1.7-.6 1.4 2.4-1.4 1.1a7 7 0 0 1 0 1.8Z"/>
+    `,
     play: '<path d="m8 5 11 7-11 7z"/>',
     pause: '<path d="M8 5h3v14H8zM15 5h3v14h-3z"/>'
   };
 
-  return `<svg viewBox="0 0 24 24" aria-hidden="true">${paths[name] || ''}</svg>`;
+  return `
+    <svg viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true">
+      ${paths[name] || ''}
+    </svg>
+  `;
 }
 
 function artwork(track) {
@@ -137,6 +161,7 @@ function parseLRC(text) {
     const minutes = Number(match[1]);
     const seconds = Number(match[2]);
     const fraction = Number(`0.${match[3] || '0'}`);
+
     lines.push({
       time: minutes * 60 + seconds + fraction,
       text: match[4].trim()
@@ -170,7 +195,8 @@ function shell(content) {
 
       <main id="pageContent">${content}</main>
 
-      <button class="dynamic-island" id="dynamicIsland" aria-label="Buka pemutar">
+      <button class="dynamic-island" id="dynamicIsland"
+        aria-label="Buka pemutar">
         <span class="island-art"><img id="islandCover" alt=""></span>
         <span class="island-info">
           <strong id="islandTitle">ZORFY</strong>
@@ -179,18 +205,25 @@ function shell(content) {
         <span class="island-action" id="islandPlay">${icon('play')}</span>
       </button>
 
-      <nav class="bottom-nav">
-        <button data-page="home" class="active">
-          ${icon('home')}<span>Beranda</span>
+      <nav class="bottom-nav" aria-label="Navigasi utama">
+        <button data-page="home" class="active" aria-label="Beranda">
+          ${icon('home')}
+          <span>Beranda</span>
         </button>
-        <button data-page="search">
-          ${icon('search')}<span>Cari</span>
+
+        <button data-page="search" aria-label="Cari">
+          ${icon('search')}
+          <span>Cari</span>
         </button>
-        <button data-page="library">
-          ${icon('library')}<span>Pustaka</span>
+
+        <button data-page="library" aria-label="Pustaka">
+          ${icon('library')}
+          <span>Pustaka</span>
         </button>
-        <button data-page="settings">
-          ${icon('settings')}<span>Settings</span>
+
+        <button data-page="settings" aria-label="Settings">
+          ${icon('settings')}
+          <span>Settings</span>
         </button>
       </nav>
 
@@ -249,6 +282,7 @@ function homePage() {
         <span class="collection-arrow">↗</span>
       </button>
     </section>
+
     <p class="source-note">MUSIC CATALOG POWERED BY AUDIUS</p>
   `;
 }
@@ -263,7 +297,8 @@ function searchPage() {
 
     <div class="search-wrap">
       ${icon('search')}
-      <input id="searchInput" placeholder="Judul lagu atau nama artis..."
+      <input id="searchInput"
+        placeholder="Judul lagu atau nama artis..."
         autocomplete="off">
     </div>
 
@@ -272,7 +307,10 @@ function searchPage() {
       <button data-category="global">Global</button>
     </div>
 
-    <div class="search-meta" id="searchMeta">PILIH KATEGORI ATAU CARI LAGU</div>
+    <div class="search-meta" id="searchMeta">
+      PILIH KATEGORI ATAU CARI LAGU
+    </div>
+
     <div class="song-list" id="searchResults">
       <div class="empty-state">Musik yang lu cari dimulai dari sini.</div>
     </div>
@@ -365,8 +403,10 @@ function settingsPage() {
 function navigate(page) {
   currentPage = page;
 
-  document.querySelectorAll('[data-page]').forEach(button => {
-    button.classList.toggle('active', button.dataset.page === page);
+  document.querySelectorAll('.bottom-nav [data-page]').forEach(button => {
+    const active = button.dataset.page === page;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-current', active ? 'page' : 'false');
   });
 
   const content = $('#pageContent');
@@ -412,7 +452,9 @@ async function loadFeatured() {
     ? found.map(songRow).join('')
     : '<div class="empty-state">Rekomendasi belum tersedia. Coba cari musik.</div>';
 
-  $('#favoriteCount').textContent = `${getFavorites().length} lagu tersimpan`;
+  const count = $('#favoriteCount');
+  if (count) count.textContent = `${getFavorites().length} lagu tersimpan`;
+
   bindSongButtons();
 }
 
@@ -444,7 +486,8 @@ async function runSearch(query) {
     meta.textContent = `${tracks.length} HASIL DITEMUKAN`;
     bindSongButtons();
   } catch {
-    results.innerHTML = '<div class="empty-state">Katalog gagal dimuat. Periksa koneksi internet.</div>';
+    results.innerHTML =
+      '<div class="empty-state">Katalog gagal dimuat. Periksa koneksi internet.</div>';
     meta.textContent = 'CONNECTION ERROR';
   }
 }
@@ -467,8 +510,12 @@ function showToast(message) {
 
   toast.textContent = message;
   toast.classList.add('visible');
+
   clearTimeout(showToast.timer);
-  showToast.timer = setTimeout(() => toast.classList.remove('visible'), 2300);
+
+  showToast.timer = setTimeout(() => {
+    toast.classList.remove('visible');
+  }, 2300);
 }
 
 function updateIsland() {
@@ -589,6 +636,7 @@ function openPlayer() {
       </div>
 
       <input type="range" id="seekBar" min="0" max="100" value="0">
+
       <div class="player-times">
         <span id="currentTime">0:00</span>
         <span id="totalTime">${formatTime(song.duration)}</span>
@@ -651,7 +699,8 @@ function bindPlayerEvents() {
 
   $('#seekBar').oninput = event => {
     if (audio.duration) {
-      audio.currentTime = audio.duration * Number(event.target.value) / 100;
+      audio.currentTime =
+        audio.duration * Number(event.target.value) / 100;
     }
   };
 }
@@ -669,7 +718,10 @@ function togglePlay() {
 function nextSong() {
   if (!queue.length) return;
 
-  const currentIndex = queue.findIndex(song => song.id === currentTrack?.id);
+  const currentIndex = queue.findIndex(
+    song => song.id === currentTrack?.id
+  );
+
   const index = shuffle
     ? Math.floor(Math.random() * queue.length)
     : (currentIndex + 1 + queue.length) % queue.length;
@@ -685,7 +737,10 @@ function previousSong() {
     return;
   }
 
-  const currentIndex = queue.findIndex(song => song.id === currentTrack?.id);
+  const currentIndex = queue.findIndex(
+    song => song.id === currentTrack?.id
+  );
+
   const index = (currentIndex - 1 + queue.length) % queue.length;
   playSong(queue[index]);
 }
@@ -695,12 +750,15 @@ function renderLyrics() {
   if (!container) return;
 
   if (!currentLyrics.length) {
-    container.innerHTML = '<p class="lyrics-empty">Belum ada lirik. Impor file .LRC melalui Settings.</p>';
+    container.innerHTML =
+      '<p class="lyrics-empty">Belum ada lirik. Impor file .LRC melalui Settings.</p>';
     return;
   }
 
   container.innerHTML = currentLyrics.map((line, index) => `
-    <p class="lyric-line" data-lyric="${index}">${escapeHTML(line.text || '♪')}</p>
+    <p class="lyric-line" data-lyric="${index}">
+      ${escapeHTML(line.text || '♪')}
+    </p>
   `).join('');
 }
 
@@ -735,6 +793,7 @@ function updateLyricsStatus() {
   }
 
   const hasLyrics = (getLyricsMap()[currentTrack.id] || []).length > 0;
+
   status.textContent = hasLyrics
     ? `Lirik tersedia untuk: ${currentTrack.title}`
     : `Belum ada lirik untuk: ${currentTrack.title}`;
@@ -758,6 +817,7 @@ function importLyrics(file) {
 
     const map = getLyricsMap();
     map[currentTrack.id] = parsed;
+
     localStorage.setItem(LYRICS_KEY, JSON.stringify(map));
 
     currentLyrics = parsed;
@@ -787,12 +847,15 @@ function bindPageEvents() {
 
   document.querySelectorAll('[data-category]').forEach(button => {
     button.onclick = () => {
-      document.querySelectorAll('[data-category]').forEach(item =>
-        item.classList.toggle('selected', item === button)
-      );
+      document.querySelectorAll('[data-category]').forEach(item => {
+        item.classList.toggle('selected', item === button);
+      });
 
       const category = button.dataset.category;
-      runSearch(category === 'indonesia' ? 'indonesian pop' : 'global pop');
+
+      runSearch(
+        category === 'indonesia' ? 'indonesian pop' : 'global pop'
+      );
     };
   });
 
@@ -803,6 +866,7 @@ function bindPageEvents() {
   if (openLibrary) openLibrary.onclick = () => navigate('library');
 
   const upload = $('#lyricsUpload');
+
   if (upload) {
     upload.onchange = () => {
       importLyrics(upload.files?.[0]);
@@ -813,8 +877,10 @@ function bindPageEvents() {
 
 app.innerHTML = shell(homePage());
 
-document.querySelectorAll('[data-page]').forEach(button => {
-  button.addEventListener('click', () => navigate(button.dataset.page));
+document.querySelectorAll('.bottom-nav [data-page]').forEach(button => {
+  button.addEventListener('click', () => {
+    navigate(button.dataset.page);
+  });
 });
 
 $('#brandHome').addEventListener('click', event => {
