@@ -3,40 +3,18 @@
   padding-bottom: 40px;
 }
 
-.poster-header {
-  padding: 25px 0;
-}
-
-.poster-header > span {
-  font-size: 10px;
-  letter-spacing: 2px;
-  color: #888;
-}
-
-.poster-header h1 {
-  font-size: 30px;
-  letter-spacing: -1px;
-  margin-bottom: 5px;
-}
-
-.poster-header p {
-  color: #999;
-  font-size: 13px;
-}
-
 .poster-preview {
   padding: 12px;
-  background: #ffffff09;
-  border: 1px solid #ffffff15;
-  border-radius: 23px;
+  border: 1px solid #ffffff20;
+  border-radius: 22px;
+  background: #ffffff08;
 }
 
 .poster-art {
-  width: 100%;
   aspect-ratio: 1 / 1.2;
   padding: 20px;
-  border-radius: 14px;
-  background: linear-gradient(145deg, #242424, #090909);
+  border-radius: 13px;
+  background: linear-gradient(145deg, #292929, #090909);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -47,18 +25,16 @@
 .poster-footer {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   font-size: 9px;
-  letter-spacing: 1.5px;
+  letter-spacing: 1.4px;
 }
 
 .poster-cover {
-  width: 70%;
+  width: 72%;
   aspect-ratio: 1;
   margin: auto;
+  border-radius: 12px;
   overflow: hidden;
-  border-radius: 10px;
-  box-shadow: 0 15px 35px #0008;
 }
 
 .poster-cover img {
@@ -88,11 +64,20 @@
   color: #aaa;
 }
 
+.poster-art[data-theme="silver"] {
+  background: linear-gradient(145deg, #777, #252525);
+}
+
+.poster-art[data-theme="glass"] {
+  background: linear-gradient(145deg, #37414a, #101820);
+  border: 1px solid #ffffff55;
+}
+
 .poster-controls {
-  margin-top: 25px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  margin-top: 22px;
 }
 
 .poster-controls label {
@@ -103,15 +88,14 @@
 .poster-controls input:not([type=file]) {
   background: #ffffff0c;
   border: 1px solid #ffffff20;
-  padding: 14px;
   color: white;
   border-radius: 12px;
+  padding: 14px;
   outline: none;
 }
 
 .poster-controls input[type=file] {
   font-size: 11px;
-  color: #aaa;
 }
 
 .theme-options {
@@ -127,22 +111,12 @@
   border: 1px solid #ffffff20;
 }
 
-.poster-art[data-theme="silver"] {
-  background: linear-gradient(145deg, #777, #252525);
-}
-
-.poster-art[data-theme="glass"] {
-  background: linear-gradient(145deg, #353535, #101820);
-  border: 1px solid #ffffff55;
-}
-
 .export-button,
 .save-button {
   padding: 15px;
   border-radius: 13px;
-  font-size: 11px;
   font-weight: 800;
-  letter-spacing: 1px;
+  font-size: 11px;
 }
 
 .export-button {
@@ -153,14 +127,11 @@
 .save-button {
   background: #ffffff12;
   border: 1px solid #ffffff25;
+  color: white;
 }
 
 .saved-section {
-  margin-top: 35px;
-}
-
-.saved-section h2 {
-  font-size: 18px;
+  margin-top: 30px;
 }
 
 .saved-poster {
