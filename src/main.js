@@ -1,6 +1,6 @@
 
 import './styles/main.css';
-import { MediaSession } from '@jofr/capacitor-media-session';
+import { MediaSession } from '@capgo/capacitor-media-session';
 
 const API = 'https://api.audius.co/v1';
 const APP_NAME = 'ZORFY';
