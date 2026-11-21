@@ -14,6 +14,7 @@
   "dependencies": {
     "@capacitor/android": "^7.4.3",
     "@capacitor/core": "^7.4.3",
+    "@capgo/capacitor-media-session": "^7.0.0",
     "lucide": "latest"
   },
   "devDependencies": {
